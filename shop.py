@@ -4,21 +4,41 @@ from Exit import exit
 
 
 def addShop(conn):
-    # create an instance of the database
-    cur = conn.cursor()
     print(' — — — Add Shop — — - \n')
-    sid = input('Enter shop id: ')
-    sname = input('Enter shop name: ')
-    rating = input('Enter shop rating: ')
-    location = input('Enter shop location: ')
+    while(1):
+        # create an instance of the database
+        cur = conn.cursor()
+        while(1):
+            sid = input('Enter shop id: ')
+            if sid == "":
+                print("please input shop id")
+            else:
+                break
+        sname = input('Enter shop name: ')
+        while(1):
+            rating = input('Enter shop rating(1-5): ')
+            try:
+                # 在try里面执行int(rating)判断输入是否为数字
+                # 判断rating是否在1-5之间
+                if int(rating) < 1 or int(rating) > 5:
+                    print("please enter rating in (1-5)")
+                else:
+                    break
+            except:
+                print("please enter integer (1-5)")
+        location = input('Enter shop location: ')
 
-    sql = 'insert into shop (sid, sname, rating, location) values (%s, %s, %s, %s)'
-    val = (sid, sname, rating, location)
-    cur.execute(sql, val)  # execute sql queries
-    conn.commit()  # save the changes that are done on the database
+        sql = 'insert into shop (sid, sname, rating, location) values (%s, %s, %s, %s)'
+        val = (sid, sname, rating, location)
+        try:
+            cur.execute(sql, val)  # execute sql queries
+            conn.commit()  # save the changes that are done on the database
 
-    print(' — — — SUCCESS — — — \n')
-    exit()
+            print(' — — — SUCCESS — — — \n')
+            exit()
+            break
+        except:
+            print("The id already exists or wrong id!")
 
 # 4.Get all shops
 

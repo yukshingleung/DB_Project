@@ -1,12 +1,13 @@
 import pymysql
 import os
 from MainMenu import displayMainMenu
-from customer import registerUser, getAllUsers
+from customer import addCustomer, getAllCustomer
 from shop import addShop, getAllShops
 from searchItem import searchItem
 from item import ShowAllItemWithShop, AddNewItemToShop
 from purchase import purchase
 from OrderCancellation import cancel
+
 
 def run():
     conn = pymysql.connect(host='localhost', user='root',
@@ -18,13 +19,21 @@ def run():
         sys_com = "cls"
     os.system(sys_com)
     displayMainMenu()
-    n = int(input("Enter suitable option: "))
+    while(1):
+        try:
+            n = int(input("Enter suitable option: "))
+            if n > 10:
+                print("Invalid Option")
+            else:
+                break
+        except:
+            print("Invalid Option")
     if n == 1:
         os.system(sys_com)
-        registerUser(conn)
+        addCustomer(conn)
     elif n == 2:
         os.system(sys_com)
-        getAllUsers(conn)
+        getAllCustomer(conn)
     elif n == 3:
         os.system(sys_com)
         addShop(conn)
@@ -49,9 +58,9 @@ def run():
     elif n == 10:
         os.system(sys_com)
         print(" - - - Thank You - - - ")
-    else:
-        os.system(sys_com)
-        run()
+    # else:
+    #     os.system(sys_com)
+    #     run()
 
 
 try:

@@ -2,27 +2,36 @@
 from Exit import exit
 
 
-def registerUser(conn):
-    # create an instance of the database
-    cur = conn.cursor()
-    print(' — — — User Registration — — - \n')
-    cid = input('Enter customer id: ')
-    cname = input('Enter customer name: ')
-    tel = input('Enter customer telephone number: ')
-    addr = input('Enter customer address: ')
+def addCustomer(conn):
+    print(' — — —Add Customer  — — - \n')
+    while(1):
+        # create an instance of the database
+        cur = conn.cursor()
+        while(1):
+            cid = input('Enter customer id: ')
+            if cid == "":
+                print("please input customer id")
+            else:
+                break
+        cname = input('Enter customer name: ')
+        tel = input('Enter customer telephone number: ')
+        addr = input('Enter customer address: ')
 
-    sql = 'insert into customer (cid, cname, tel, addr) values (%s, %s, %s, %s)'
-    val = (cid, cname, tel, addr)
-    cur.execute(sql, val)  # execute sql queries
-    conn.commit()  # save the changes that are done on the database
+        sql = 'insert into customer (cid, cname, tel, addr) values (%s, %s, %s, %s)'
+        val = (cid, cname, tel, addr)
+        try:
+            # 如果报错，则可能是用户id已存在，需重新输入
+            cur.execute(sql, val)  # execute sql queries
+            conn.commit()  # save the changes that are done on the database
+            print(' — — — SUCCESS — — — \n')
+            exit()
+            break
+        except:
+            print("The id already exists or wrong id!")
 
-    print(' — — — SUCCESS — — — \n')
-    exit()
 
 # 2.All Customer
-
-
-def getAllUsers(conn):
+def getAllCustomer(conn):
     cur = conn.cursor()
     print(' — — — All Users — — - \n')
     cur.execute('select * from customer')

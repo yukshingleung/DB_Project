@@ -1,7 +1,7 @@
 # create the menu for the functionalities
 def displayMainMenu():
     print(' — — — — MENU — — — - ')
-    print(' 1. Register User')          # add a new user to db
+    print(' 1. Add User')          # add a new user to db
     print(' 2. All Users')              # retrieve all user in db
     print(' 3. Add shop')
     print(' 4. All Shops')

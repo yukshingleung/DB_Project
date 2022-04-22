@@ -1,25 +1,24 @@
-# 3.Add shop
-
 from Exit import exit
-
-
+# 3. Add a new shop
+#   1) Enter a new shop ID
+#   2) Insert a new shop
 def addShop(conn):
     print(' — — — Add Shop — — - \n')
     while(1):
-        # create an instance of the database
         cur = conn.cursor()
-        while(1):
+        # Enter a shop ID
+        while True:
             sid = input('Enter shop id: ')
+            # make sure that shop id is not ""
             if sid == "":
                 print("please input shop id")
             else:
                 break
         sname = input('Enter shop name: ')
-        while(1):
+        while True:
             rating = input('Enter shop rating(1-5): ')
             try:
-                # 在try里面执行int(rating)判断输入是否为数字
-                # 判断rating是否在1-5之间
+                # make sure that rating is an integer in [1-5]
                 if int(rating) < 1 or int(rating) > 5:
                     print("please enter rating in (1-5)")
                 else:
@@ -27,25 +26,24 @@ def addShop(conn):
             except:
                 print("please enter integer (1-5)")
         location = input('Enter shop location: ')
-
+        # Insert a new shop
         sql = 'insert into shop (sid, sname, rating, location) values (%s, %s, %s, %s)'
         val = (sid, sname, rating, location)
         try:
-            cur.execute(sql, val)  # execute sql queries
-            conn.commit()  # save the changes that are done on the database
-
+            cur.execute(sql, val)
+            conn.commit()
             print(' — — — SUCCESS — — — \n')
             exit()
             break
         except:
             print("The id already exists or wrong id!")
 
-# 4.Get all shops
-
-
+# 4. Get all shops
+#   1) Show all shops
 def getAllShops(conn):
     cur = conn.cursor()
     print(' — — — All Shops — — - \n')
+    # Show all shops
     cur.execute('select * from shop')
     shopList = cur.fetchall()  # fetch the retrieved data and save it
     i = 0

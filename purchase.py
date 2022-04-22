@@ -1,6 +1,13 @@
 from Exit import exit
 
-# 8. Show all item with a shop
+# 8. Purchase
+#   1) Show shop list
+#   2) Input shop id
+#   3) Retrieve item information based on shop id
+#   4) Confirmation of purchase
+#   5) Input cid, sid, iid and quantity
+#   6) Calculate the rest quantity
+#   7) Insert into order list (insert trigger)
 def purchase(conn):
     cur = conn.cursor()
 
@@ -16,6 +23,7 @@ def purchase(conn):
         print(shop[0], "|", shop[1], "|", shop[2], "|", shop[3])
 
     print('\n — — — Get All Items with a Shop — — - \n')
+    # Input shop id
     while True:
         shop_id = input('Enter Shop ID: ')
         if shop_id in shopList:
@@ -23,12 +31,14 @@ def purchase(conn):
         else:
             print("You enter wrong Shop ID and please enter again! \n")
 
+    # Retrieve item information based on shop id
     sql = "select * from item where sid=\'" + shop_id + '\''
     cur.execute(sql)
     itemTuple = cur.fetchall()
     itemList = []
 
     if len(itemTuple) == 0:
+        # If no item on this shop
         print(" - - - No items available - - - ")
     else:
         print(" - - - Item List of Shop", shop_id, " - - - ")
@@ -43,6 +53,7 @@ def purchase(conn):
             print(" Quantity:   ", item[6])
 
     print("\n")
+    # Confirmation of purchase
     while True:
         n = input('Input 1 to buy item, or input 0 to exit: ')
         try:
@@ -52,24 +63,28 @@ def purchase(conn):
                 break
         except:
             print("Please enter 1 or 0.")
+
     print('\n')
     if int(n) == 0:
         exit()
     elif int(n) == 1:
         print(' - - - Purchase - - - \n')
+        # Get all cid
         sql = "select cid from customer"
         cur.execute(sql)
         customerTuple = cur.fetchall()
         customerList = []
+        # Put cid into list
         for customer in customerTuple:
             customerList.append(customer[0])
+        # Make sure cid in database
         while True:
             cid = input('Enter costumer id: ')
             if cid in customerList:
                 break
             else:
                 print("You enter wrong Customer ID and please enter again! \n")
-
+        # Make sure iid in database
         while True:
             iid = input('Enter item id: ')
             if iid in itemList:
@@ -78,7 +93,7 @@ def purchase(conn):
                 print("You enter wrong Item ID and please enter again! \n")
         
         sid = shop_id
-
+        # Make sure quantity larger than 0
         while True:
             quantity = input('Enter quantity(>0): ')
             try:
@@ -89,24 +104,17 @@ def purchase(conn):
             except:
                 print("Please enter quantity larger than 0")
 
-        # 判断shop中是否存在此item
-        # sql_1 = 'select iid from item where sid=\'' + sid + '\''
-        # cur.execute(sql_1)
-        # iid_list = [x[0] for x in cur.fetchall()]
-        # print("List:", itemList)
         if iid in itemList:
+            # Get quantity of that item
             sql_2 = 'select qty from item where sid=%s and iid=%s'
             val_2 = (sid, iid)
             cur.execute(sql_2, val_2)
             total_qty = cur.fetchone()
+            # Calculate the rest quantity
             rest_qty = int(total_qty[0]) - int(quantity)
             if rest_qty >= 0:
-                # 更新item数据库对应数据的quantity
-                # sql_3 = 'update item set qty = %s where sid=%s and iid=%s'
-                # val_3 = (rest_qty, sid, iid)
-                # cur.execute(sql_3, val_3)
-                # conn.commit()
-                # 插入orderlist
+                # Database have enough quantity
+                # update quantity of item with trigger and insert into orderlist
                 sql_4 = 'insert into orderlist (cid, iid, sid, qty) values (%s, %s, %s, %s)'
                 val_4 = (cid, iid, sid, quantity)
                 cur.execute(sql_4, val_4)

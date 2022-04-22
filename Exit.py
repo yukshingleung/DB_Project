@@ -1,20 +1,8 @@
-# 5.Exit (exit function)
-
-
+# 10.Exit (exit function)
 def exit():
-    # while(1):
-    #     try:
-    #         n = int(input(' Press 0 to return menu: '))
-    #         if n != 0:
-    #             print('Invalid Option')
-    #         else:
-    #             break
-    #     except:
-    #         print('Invalid Option')
-
-    # run()
     while(1):
         try:
+            # make sure n is not ""
             n = int(input(' Press 0 to return menu: '))
             break
         except:

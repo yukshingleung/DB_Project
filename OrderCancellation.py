@@ -1,14 +1,20 @@
 from Exit import exit
 
-
+# 9. Cancel the Order in orderlist
+#   1) Get all order list
+#   2) Get all information of that order
+#   3) Confirmation of Cancel
+#   4) Delete corresponding order (delete trigger)
 def cancel(conn):
     cur = conn.cursor()
+
     # Get all order list
     sql = "select oid from orderlist"
     cur.execute(sql)
     orderTuple = cur.fetchall()
     orderTuple_List = []
-    # Convert to list type
+
+    # Convert from tuple type to list
     for order in orderTuple:
         orderTuple_List.append(str(order[0]))
 
@@ -22,25 +28,19 @@ def cancel(conn):
         else:
             print("You enter wrong Order ID and please enter again! \n")
 
-    # sql = 'select oid from orderlist where oid=\'' + orderid + '\''  # 找出想要删除的订单号
-    # print(sql)
-    # cur.execute(sql)
-    # order_id = cur.fetchone()  # 获取对应订单号的oid(元组)
-    # if len(order_id) == 0:
-    #     print(' The order is not exists')
-    # else:
-
-    sql = "select * from orderlist where oid=\'" + orderid + '\''  # 查找订单对应的所有属性
+    # Get all information of that order
+    sql = "select * from orderlist where oid=\'" + orderid + '\''
     cur.execute(sql)
     orderlist = cur.fetchall()
-    print(" ----- Order List of Item", orderid, " ----- ")
 
+    print(" ----- Order List of Item", orderid, " ----- ")
     print(" Order ID : ", orderlist[0][0])
     print(" Customer : ", orderlist[0][1])
     print(" Item : ", orderlist[0][2])
     print(" Shop : ", orderlist[0][3])
     print(" Item Quantity: ", orderlist[0][4])
 
+    # Confirmation of Cancel
     while True:
         n = input(' Enter 1 to continue to cancel, or enter 0 to exit: ')
         try:
@@ -51,10 +51,11 @@ def cancel(conn):
         except:
             print("Please enter 1 or 0.")
     print('\n')
+
     if int(n) == 0:
         exit()
     elif int(n) == 1:
-        # 删除orderlist对应数据
+        # Delete corresponding order
         sql = 'delete from orderlist where oid = ' + str(orderlist[0][0])
         cur.execute(sql)
         conn.commit()

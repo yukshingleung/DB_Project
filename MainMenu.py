@@ -6,7 +6,7 @@ def displayMainMenu():
     print(' 3. Add a New Shop')
     print(' 4. Show All Shops')
     print(' 5. Search Item')
-    print(' 6. Show All Items')
+    print(' 6. Show All Items in a Shop')
     print(' 7. Add a New Item to a Shop')
     print(' 8. Purchase')
     print(' 9. Cancel Order')

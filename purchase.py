@@ -2,14 +2,16 @@ from Exit import exit
 import os
 
 # 8. Purchase
-#   1) Show shop list
-#   2) Input shop id
-#   3) Retrieve item information based on shop id
-#   4) Confirmation of purchase
-#   5) Input cid, sid, iid and quantity
-#   6) Calculate the rest quantity
-#   7) Insert into order list (insert trigger)
-
+#   1) Get oid and set automatically
+#   2) Input customer cid
+#   3) Purchase cycle
+#       3.1) Show shop list and input shop sid
+#       3.2) Retrieve item information based on shop id
+#       3.3) Input item iid and quantity
+#       3.4) Calculate the rest quantity in item table
+#       3.5) Check that whether orderlist have same order in this purchase
+#       3.6) Insert into order list (insert trigger)
+#       3.7) If continue to buy return 3.1), if finish purchase then exit
 def purchase(conn):
     cur = conn.cursor()
 
@@ -17,14 +19,13 @@ def purchase(conn):
     sql = 'select max(oid) from orderlist'
     cur.execute(sql)
     order_id = cur.fetchone()
-    print("order_id", order_id)
     if order_id[0] == None:
         oid = 0
     else:
         oid = order_id[0] + 1
 
-    print(' - - - Purchase - - - \n')
-    print("oid", oid)
+    print(' - - - Purchase - - - ')
+    print("current order id:", oid,"\n")
     # Get all cid
     sql = "select cid from customer"
     cur.execute(sql)
@@ -114,7 +115,8 @@ def purchase(conn):
         # Calculate the rest quantity
         rest_qty = int(total_qty[0]) - int(quantity)
         if rest_qty >= 0:
-            sql_3 = "select cid, qty from orderlist where oid=%s and iid=%s and sid=%s"
+            # Check that whether orderlist have same order in this purchase
+            sql_3 = "select qty from orderlist where oid=%s and iid=%s and sid=%s"
             val_3 = (oid, iid, sid)
             cur.execute(sql_3, val_3)
             temp = cur.fetchall()
@@ -131,33 +133,47 @@ def purchase(conn):
                 conn.commit()
                 print(" — — — SUCCESS — — — \n")
             # if db have same record (oid, iid, sid)
-            elif temp and cid == temp[0][0]:
+            elif temp:
                 print("You already buy same thing, and the quantity will add together.")
                 # print("temp is not empty")
                 print("temp", temp)
-                old_qty = temp[0][1]
-                print("old_qty", old_qty)
+                temp_qty = temp[0][0]
+                print("temp_qty", temp_qty)
                 print("int(qty)", int(quantity))
-                new_qty = int(quantity) + old_qty
+
+                # new order qty = input quantity + exist order qty
+                new_qty = int(quantity) + temp_qty
                 print("new_qty", new_qty)
                 sql_5 = 'update orderlist set qty=%s where oid=%s and iid=%s and sid=%s'
                 val_5 = (new_qty, oid, iid, sid)
                 cur.execute(sql_5, val_5)
                 conn.commit()
+
+                # Update item table with rest qty instead of trigger
+                sql = "update item set qty=%s where iid=%s and sid=%s"
+                val = (rest_qty, iid, sid)
+                cur.execute(sql, val)
+                conn.commit()
                 print(" — — — SUCCESS — — — \n")
             else:
-                print("temp wrong")
-                """
-                need to improve
-                """
-            n = int(input("press 1 to buy more, 2 to finish:"))
-            if n == 1:
+                print("[WRONG]temp wrong and Choose Shop again.")
+                continue
+
+            while True:
+                n = input('Enter 1 to buy more, and 2 to finish this purchase: ')
+                try:
+                    if int(n) != 1 and int(n) != 2:
+                        print("Please enter 1 or 2.")
+                    else:
+                        break
+                except:
+                    print("Please enter 1 or 2.")
+            print("\n")
+            if int(n) == 1:
                 pass
             else:
                 exit()
                 break
+
         else:
-            print(" exceed current largest amount! ")
-            """
-            need to improve
-            """
+            print("\nExceed current largest amount and choose Shop again.\n")

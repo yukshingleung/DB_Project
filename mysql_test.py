@@ -12,7 +12,7 @@ def run():
     conn = pymysql.connect(
         host='localhost',
         user='root',
-        passwd='huang741108',
+        passwd='34801708',
         port=3306,
         db='shopDB',
         charset='utf8'

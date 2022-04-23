@@ -9,7 +9,7 @@ def cancel(conn):
     cur = conn.cursor()
 
     # Get all order list
-    sql = "select oid from orderlist"
+    sql = "select DISTINCT oid from orderlist" # Add DISTINCT keyword and make sure that it only show one oid
     cur.execute(sql)
     orderTuple = cur.fetchall()
     orderTuple_List = []
@@ -29,16 +29,18 @@ def cancel(conn):
             print("You enter wrong Order ID and please enter again! \n")
 
     # Get all information of that order
-    sql = "select * from orderlist where oid=\'" + orderid + '\''
+    sql = "select * from orderlist where oid=" + orderid
     cur.execute(sql)
-    orderlist = cur.fetchall()
 
-    print(" ----- Order List of Item", orderid, " ----- ")
-    print(" Order ID : ", orderlist[0][0])
-    print(" Customer : ", orderlist[0][1])
-    print(" Item : ", orderlist[0][2])
-    print(" Shop : ", orderlist[0][3])
-    print(" Item Quantity: ", orderlist[0][4])
+    list = cur.fetchall()
+    # Show all item in this order
+    for orderlist in list:
+        print(" ----- Order List of Item", orderid, " ----- ")
+        print(" Order ID : ", orderlist[0])
+        print(" Customer : ", orderlist[1])
+        print(" Item : ", orderlist[2])
+        print(" Shop : ", orderlist[3])
+        print(" Item Quantity: ", orderlist[4])
 
     # Confirmation of Cancel
     while True:
@@ -56,7 +58,7 @@ def cancel(conn):
         exit()
     elif int(n) == 1:
         # Delete corresponding order
-        sql = 'delete from orderlist where oid = ' + str(orderlist[0][0])
+        sql = 'delete from orderlist where oid = ' + str(orderlist[0])
         cur.execute(sql)
         conn.commit()
         print(" — — — SUCCESS — — — \n")

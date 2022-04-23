@@ -149,11 +149,11 @@ def purchase(conn):
                 cur.execute(sql_5, val_5)
                 conn.commit()
 
-                # Update item table with rest qty instead of trigger
-                sql = "update item set qty=%s where iid=%s and sid=%s"
-                val = (rest_qty, iid, sid)
-                cur.execute(sql, val)
-                conn.commit()
+                # # Update item table with rest qty instead of trigger
+                # sql = "update item set qty=%s where iid=%s and sid=%s"
+                # val = (rest_qty, iid, sid)
+                # cur.execute(sql, val)
+                # conn.commit()
                 print(" — — — SUCCESS — — — \n")
             else:
                 print("[WRONG]temp wrong and Choose Shop again.")
